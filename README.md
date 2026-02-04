@@ -1,78 +1,43 @@
-# **Viro-Flow (viral-discovery-pipeline): A Viral Metagenomics Discovery Pipeline**
+# Viral Discovery Pipeline
 
-Viro-Flow is a robust and automated bioinformatics pipeline for the identification and analysis of viral sequences from raw metagenomic sequencing data. It processes one or more samples from raw reads to a final abundance matrix of viral operational taxonomic units (vOTUs), making it suitable for comparative viral metagenomics.
+A modern, configurable bioinformatics pipeline for viral discovery with typed configuration, a Python CLI,
+container recipes, and workflow orchestration support.
 
-[Image of a DNA sequencing workflow diagram](https://encrypted-tbn0.gstatic.com/licensed-image?q=tbn:ANd9GcQKvDI7XuUGWnKOtnd5K7glwtGeCbWnQHj-ufKkR2i6qXj_XW8Xu0gIvCnOdskoRk0w4jJRTf3YHvPHAMzy223wmUzV5zhQDh-xPUFIVkF2DEV7I6k)
+## Quickstart
 
-The pipeline is structured into two main stages:
+```bash
+pip install -e .
+viral-pipeline --help
+viral-pipeline init --output-path config.yaml
+viral-pipeline config --validate --config-path config.yaml
+viral-pipeline run --input-dir data/ --output-dir outputs/
+```
 
-1. **viral\_pipeline.sh**: A per-sample processing script that takes raw FASTQ files and performs QC, host read removal, assembly, and viral contig identification.  
-2. **combine\_and\_analyze.sh**: A multi-sample script that aggregates the results from all samples, performs species-level clustering to define vOTUs, and calculates their relative abundance across all samples.
+## Configuration
 
-## **Features**
+Configuration lives in `config/` and is validated with Pydantic. Use the CLI to validate or render the
+merged configuration.
 
-* **Automated & Robust**: The pipeline is designed to run from start to finish with minimal intervention. It includes error checking to halt on command failures.  
-* **Configurable**: All tool paths, databases, and key parameters are located in a central configuration section for easy setup.  
-* **Scalable**: Efficiently processes individual samples and then aggregates them for large-scale comparative analysis.  
-* **Best Practices**: Utilizes a suite of well-regarded bioinformatics tools for each step of the analysis.  
-* **Detailed Documentation**: Includes comprehensive information on dependencies and tool functions.
+```bash
+viral-pipeline config --validate --config-path config/default.yaml
+```
 
-## **Installation & Dependencies**
+## Development
 
-To use Viro-Flow, you must have several bioinformatics tools installed and available in your system's PATH. We recommend using a Conda environment to manage these dependencies.
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -e .[all]
+pytest
+```
 
-### **1\. Create a Conda Environment**
+## Documentation
 
-conda create \-n viroflow-env \-c conda-forge \-c bioconda \\  
-    fastp soapnuke bwa samtools bedtools \\  
-    spades megahit seqkit python=3.8 \\  
-    virsorter2 'dvf-py=1.0' genomad checkv \\  
-    fastani bowtie2 coverm
+- MkDocs user guides live in `docs/`
+- Sphinx API documentation lives in `docs/api/`
 
-*Note: Some tools like bamToFastq may require separate installation if not available via Conda.*
+## Containers
 
-### **2\. Activate the Environment**
-
-conda activate viroflow-env
-
-### **3\. Download Databases**
-
-You will also need to download the required databases and specify their paths in the configuration section of the scripts. See the [Tools Documentation](https://www.google.com/search?q=./DOCS/TOOLS.md) for links and details.
-
-## **Usage**
-
-### **Stage 1: Per-Sample Processing**
-
-Run viral\_pipeline.sh for each of your samples. This script will create a dedicated output folder for each sample.
-
-**For paired-end data:**
-
-./viral\_pipeline.sh \\  
-    \-s MySample1 \\  
-    \-1 /path/to/reads\_1.fastq.gz \\  
-    \-2 /path/to/reads\_2.fastq.gz
-
-**For single-end data:**
-
-./viral\_pipeline.sh \\  
-    \-s MySample2 \\  
-    \-r /path/to/reads.fastq.gz
-
-After this stage, each sample directory will contain a \*\_final\_viruses.fna file with high-quality viral contigs.
-
-### **Stage 2: Multi-Sample Analysis**
-
-Once all samples have been processed, run combine\_and\_analyze.sh to cluster the viruses and calculate their abundance.
-
-./combine\_and\_analyze.sh \\  
-    \-i /path/to/parent/dir/of/all/sample/folders \\  
-    \-o /path/to/final\_analysis\_output
-
-### **Key Outputs**
-
-* **vOTUs\_representatives.fa**: A FASTA file containing the representative sequence for each viral "species" (vOTU). This is your final viral database.  
-* **vOTU\_abundance\_matrix\_tpm.tsv**: A tab-separated file with vOTUs as rows and samples as columns, containing the TPM (Transcripts Per Million) abundance values. This table is ready for downstream statistical analysis and visualization.
-
-## **Citation**
-
-If you use this pipeline, please cite the individual tools used in the workflow. You can find a complete list and links in the [Tools Documentation](https://www.google.com/search?q=./DOCS/TOOLS.md).
+- `Dockerfile` for multi-stage builds
+- `docker-compose.yml` for local dev
+- `Singularity.def` for HPC environments

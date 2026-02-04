@@ -1,0 +1,5 @@
+tools:
+  threads: 2
+  memory_gb: 8
+logging:
+  level: "DEBUG"

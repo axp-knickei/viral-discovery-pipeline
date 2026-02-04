@@ -1,0 +1,5 @@
+name: viral_detection
+channels:
+  - conda-forge
+dependencies:
+  - python=3.11

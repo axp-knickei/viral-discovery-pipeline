@@ -1,0 +1,12 @@
+site_name: Viral Discovery Pipeline
+site_description: Modern viral discovery pipeline user guide
+site_url: https://example.com/viral-pipeline
+repo_url: https://example.com/viral-pipeline
+nav:
+  - Home: docs/index.md
+  - Usage: docs/usage.md
+  - Troubleshooting: docs/troubleshooting.md
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true

@@ -1,0 +1,19 @@
+database:
+  host_genome: "/data/db/hg38/hg38.fa.gz"
+  dvf_models: "/data/db/DeepVirFinder/models"
+  genomad_db: "/data/db/genomad_db"
+  checkv_db: "/data/db/checkv-db-v1.4"
+tools:
+  threads: 8
+  memory_gb: 50
+  min_contig_length: 10000
+quality:
+  quality_threshold: 20
+  min_read_length: 30
+  adapter_removal: true
+clustering:
+  ani_threshold: 0.95
+  min_coverage: 0.85
+logging:
+  level: "INFO"
+  log_dir: "logs"

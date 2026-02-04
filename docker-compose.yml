@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  viral-pipeline:
+    build:
+      context: .
+      target: runtime
+    volumes:
+      - ./:/app
+    command: ["viral-pipeline", "--help"]

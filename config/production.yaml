@@ -1,0 +1,5 @@
+tools:
+  threads: 32
+  memory_gb: 256
+logging:
+  level: "INFO"

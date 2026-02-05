@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import subprocess
-import sys
 from pathlib import Path
-from typing import List, Dict, Tuple
+from typing import List
 
 import pandas as pd
 import networkx as nx
@@ -82,7 +81,7 @@ class Clusterer:
         votu_reps_fa = output_dir / "vOTUs_representatives.fa"
         clusters_tsv = output_dir / "clusters.tsv"
         self._process_clusters(
-            dereplicated_fa, fastani_out, votu_reps_fa, clusters_tsv
+            dereplicated_fa, fastani_out, votu_reps_fa, clusters_tsv, samtools
         )
 
         # 3. Abundance Calculation
@@ -97,7 +96,8 @@ class Clusterer:
         dereplicated_fa: Path,
         fastani_out: Path,
         votu_reps_fa: Path,
-        clusters_tsv: Path
+        clusters_tsv: Path,
+        samtools: Path
     ) -> None:
         logger.info("Processing clusters...")
         ani_threshold = self.config.clustering.ani_threshold
@@ -130,21 +130,19 @@ class Clusterer:
         # But to be safe, we should ensure all sequences are in the graph.
         # We need to read the dereplicated FASTA headers.
 
+        # Use samtools faidx to get sequence lengths
+        self._run_command(
+            [str(samtools), "faidx", str(dereplicated_fa)],
+            "Indexing dereplicated FASTA"
+        )
+
         seq_lengths = {}
-        with open(dereplicated_fa, "r") as f:
-            current_id = ""
-            current_len = 0
+        fai_file = Path(str(dereplicated_fa) + ".fai")
+        with open(fai_file, "r") as f:
             for line in f:
-                line = line.strip()
-                if line.startswith(">"):
-                    if current_id:
-                        seq_lengths[current_id] = current_len
-                    current_id = line[1:].split()[0] # Take first word as ID
-                    current_len = 0
-                else:
-                    current_len += len(line)
-            if current_id:
-                seq_lengths[current_id] = current_len
+                parts = line.split("\t")
+                if len(parts) >= 2:
+                    seq_lengths[parts[0]] = int(parts[1])
 
         # Efficiently add missing nodes (singletons)
         # add_nodes_from will ignore existing nodes if no attributes are provided,
@@ -152,7 +150,6 @@ class Clusterer:
         G.add_nodes_from(seq_lengths.keys())
 
         # Find components and select representatives (longest)
-        clusters = []
         reps = set()
 
         with open(clusters_tsv, "w") as f:

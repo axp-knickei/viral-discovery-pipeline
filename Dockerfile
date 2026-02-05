@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
  && rm -rf /var/lib/apt/lists/*
 
 COPY pyproject.toml README.md /app/
+COPY src/ /app/src/
 RUN pip install --upgrade pip \
  && pip wheel --no-cache-dir --wheel-dir /wheels .
 

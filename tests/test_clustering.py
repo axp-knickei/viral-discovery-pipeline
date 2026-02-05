@@ -95,9 +95,9 @@ def test_cluster_flow(clusterer, tmp_path, mocker):
     derep_file = output_dir / "all_viruses_dereplicated.fna"
     derep_file.write_text(">contig1\nATCG\n>contig2\nATCG\n")
 
-    # Simulate .fai file (since samtools faidx is mocked)
-    fai_file = output_dir / "all_viruses_dereplicated.fna.fai"
-    fai_file.write_text("contig1\t1000\t0\t80\t81\ncontig2\t1000\t0\t80\t81\n")
+    # Simulate .fai file creation (since we mock subprocess, it won't be created by samtools)
+    fai_file = Path(str(derep_file) + ".fai")
+    fai_file.write_text("contig1\t4\t10\t4\t5\ncontig2\t4\t20\t4\t5\n")
 
     # Run
     result = clusterer.cluster(input_contigs, input_reads, output_dir)
@@ -108,14 +108,17 @@ def test_cluster_flow(clusterer, tmp_path, mocker):
     # Verify commands
     # 1. CD-HIT
     # 2. FastANI
-    # 3. Bowtie2 Build
-    # 4. CoverM
+    # 3. Samtools Index
+    # 4. Samtools Extract
+    # 5. Bowtie2 Build
+    # 6. CoverM
 
     # Extract commands passed to subprocess.run
     commands = [call_args[0][0] for call_args in mock_run.call_args_list]
 
     # Check if key commands are present (by checking executable path mostly which is /usr/bin/tool)
     assert any("cd-hit-est" in str(cmd) or "/usr/bin/tool" in cmd for cmd in commands)
+    assert any("faidx" in cmd for cmd in commands) # Check for samtools calls
     # Since we mocked check_dependency to return /usr/bin/tool, strict string matching on command name might fail if we used the path
     # But in the code: str(cd_hit) -> "/usr/bin/tool"
 

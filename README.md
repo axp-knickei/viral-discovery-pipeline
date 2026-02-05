@@ -666,6 +666,21 @@ working_directory/
 
 ---
 
+## **🔗 Next Steps: Advanced Catalog Generation**
+
+**Looking for a non-redundant catalog?**
+
+While this pipeline provides basic clustering, for high-resolution species demarcation using the latest `skani` algorithms and star-topology clustering, we recommend passing the final `.fna` outputs to [viral-genome-cataloger](https://github.com/axp-knickei/viral-genome-cataloger).
+
+This approach ensures:
+*   **Stricter clustering** (Star-topology vs Connected Components)
+*   **Faster processing** (skani vs FastANI)
+*   **Easy integration** of external datasets
+
+👉 **[Read the Complete Integration Guide](./DOCS/INTEGRATION.md)**
+
+---
+
 ## **📚 Integration with Other Tools**
 
 ### **QIIME2 Integration**

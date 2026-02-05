@@ -1,9 +1,8 @@
 from __future__ import annotations
 
 import subprocess
-import sys
 from pathlib import Path
-from typing import List, Dict, Tuple
+from typing import List
 
 import pandas as pd
 import networkx as nx

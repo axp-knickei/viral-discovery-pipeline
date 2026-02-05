@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock
 import pytest
 from pathlib import Path
 import pandas as pd
@@ -132,6 +132,8 @@ def test_cluster_flow(clusterer, tmp_path, mocker):
     assert any("bowtie2-build" in str(cmd) or "/usr/bin/tool" in cmd for cmd in commands)
     # CoverM
     assert any("coverm" in str(cmd) or "/usr/bin/tool" in cmd for cmd in commands)
+    # Samtools faidx
+    assert any("faidx" in cmd for cmd in commands)
 
     # Verify output files exist (mocked creation in _process_clusters)
     assert result.clusters.exists()

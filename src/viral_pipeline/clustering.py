@@ -146,9 +146,10 @@ class Clusterer:
             if current_id:
                 seq_lengths[current_id] = current_len
 
-        for seq_id in seq_lengths:
-            if seq_id not in G:
-                G.add_node(seq_id)
+        # Efficiently add missing nodes (singletons)
+        # add_nodes_from will ignore existing nodes if no attributes are provided,
+        # preserving the graph structure while being faster than a Python loop.
+        G.add_nodes_from(seq_lengths.keys())
 
         # Find components and select representatives (longest)
         clusters = []

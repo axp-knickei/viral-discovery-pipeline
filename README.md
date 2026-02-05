@@ -124,6 +124,17 @@ To ensure comparable results across samples, we use **Transcripts Per Million (T
 
 ---
 
+## **🖥️ HPC & Cluster Usage**
+
+Running on a university or institute cluster? We have specific guides for:
+- **Singularity / Apptainer** (Recommended)
+- **Slurm / PBS** Job submission
+- **Conda** on HPC
+
+👉 **[Read the HPC User Guide](./docs/hpc_guide.md)**
+
+---
+
 ## **📦 Step-by-Step Installation Guide**
 
 ### **What is Conda?**

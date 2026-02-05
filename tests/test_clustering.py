@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock, call, patch
+from unittest.mock import MagicMock
 import pytest
 from pathlib import Path
 import pandas as pd
@@ -95,6 +95,10 @@ def test_cluster_flow(clusterer, tmp_path, mocker):
     derep_file = output_dir / "all_viruses_dereplicated.fna"
     derep_file.write_text(">contig1\nATCG\n>contig2\nATCG\n")
 
+    # Simulate .fai file (since samtools faidx is mocked)
+    fai_file = output_dir / "all_viruses_dereplicated.fna.fai"
+    fai_file.write_text("contig1\t1000\t0\t80\t81\ncontig2\t1000\t0\t80\t81\n")
+
     # Run
     result = clusterer.cluster(input_contigs, input_reads, output_dir)
 
@@ -125,6 +129,8 @@ def test_cluster_flow(clusterer, tmp_path, mocker):
     assert any("bowtie2-build" in str(cmd) or "/usr/bin/tool" in cmd for cmd in commands)
     # CoverM
     assert any("coverm" in str(cmd) or "/usr/bin/tool" in cmd for cmd in commands)
+    # Samtools faidx
+    assert any("faidx" in cmd for cmd in commands)
 
     # Verify output files exist (mocked creation in _process_clusters)
     assert result.clusters.exists()

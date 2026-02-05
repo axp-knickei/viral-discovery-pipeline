@@ -86,6 +86,18 @@ graph TD
     style I fill:#c8e6c9
 ```
 
+### **Methodology & Algorithms**
+
+Viro-Flow employs scientifically validated methods commonly used in high-impact viromics publications (e.g., *Nature*, *Cell*).
+
+#### **Viral Abundance Calculation (TPM)**
+To ensure comparable results across samples, we use **Transcripts Per Million (TPM)** normalization:
+
+1.  **Dereplication**: Redundant viral contigs are removed using **CD-HIT-EST** (99% identity, 90% coverage) to create a non-redundant catalog.
+2.  **vOTU Clustering**: Contigs are grouped into Viral Operational Taxonomic Units (vOTUs) at species level using **FastANI** (95% ANI, 85% coverage).
+3.  **Read Mapping**: Quality-controlled reads from each sample are mapped back to the vOTU catalog using **Bowtie2** (very-sensitive mode).
+4.  **Abundance Estimation**: **CoverM** calculates TPM, adjusting for gene length and sequencing depth. This metric represents the relative abundance of each virus in the community.
+
 ---
 
 ## **✅ Before You Begin: Essential Checklist**

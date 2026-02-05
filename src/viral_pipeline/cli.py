@@ -66,7 +66,9 @@ def run(
             assembly_result.contigs, output_dir / "viral"
         )
         progress.update(task, description="Clustering vOTUs")
-        clusterer.cluster(viral_result.contigs, output_dir / "clustering")
+        clusterer.cluster(
+            viral_result.contigs, host_result.filtered_reads, output_dir / "clustering"
+        )
         progress.update(task, description="Pipeline complete", completed=1)
 
     if resume:
